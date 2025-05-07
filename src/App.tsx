@@ -443,7 +443,7 @@ function App() {
                     <YAxis />
                     <Tooltip
                       labelFormatter={(label) => (
-                        <Typography variant="body1" component="div">
+                        <Typography variant="body1" component="span">
                           Year {label}
                         </Typography>
                       )}
