@@ -10,6 +10,17 @@ import {
 } from "@mui/material";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { formatText, parseNumber } from "./utils/text.util";
 
 type FormValue = {
   initialInvestment: string;
@@ -52,6 +63,16 @@ function App() {
   const performanceData = result
     ? (returnData! * 100) / result.data.slice(-1)[0].invested
     : null;
+  const graphData = result
+    ? result.data
+        .reduce((acc, item) => {
+          const [lastItem, ...restItems] = acc;
+          return lastItem?.year === item.year
+            ? [item, ...restItems]
+            : [item, ...acc];
+        }, [] as DataMonth[])
+        .reverse()
+    : null;
 
   const calculate = (
     formValue: FormValue
@@ -65,7 +86,14 @@ function App() {
 
     let total = +formValue.initialInvestment; // Monto inicial
     let invested = +formValue.initialInvestment; // Monto inicial
-    const data: DataMonth[] = [];
+    const data: DataMonth[] = [
+      {
+        month: 0,
+        year: 0,
+        invested,
+        total,
+      },
+    ];
     let initialYearAmount = total;
 
     for (let i = 1; i <= months; i++) {
@@ -107,13 +135,6 @@ function App() {
     reset();
     setResult(null);
     firstControlRef.current?.focus();
-  };
-
-  const parseNumber = (value: number) => {
-    return new Intl.NumberFormat("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
   };
 
   return (
@@ -294,6 +315,7 @@ function App() {
         {/* RESULT */}
         {!!result && (
           <>
+            {/* STATS */}
             <Typography
               variant="h4"
               component="h2"
@@ -388,6 +410,52 @@ function App() {
                   </Typography>
                 </CardContent>
               </Card>
+            </Box>
+
+            {/* Graph */}
+            <Box width="100%" height="500px" mt={5}>
+              <ResponsiveContainer>
+                <LineChart
+                  data={graphData!}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="year"
+                    tickFormatter={(value) => `Year ${value}`}
+                  />
+                  <YAxis />
+                  <Tooltip
+                    labelFormatter={(label) => (
+                      <Typography variant="body1" component="div">
+                        Year {label}
+                      </Typography>
+                    )}
+                    formatter={(value, name) => [
+                      `$${parseNumber(value as number)}`,
+                      formatText(name as string, "capitalize"),
+                    ]}
+                    separator=": "
+                  />
+                  <Legend
+                    formatter={(value: string) =>
+                      formatText(value, "capitalize")
+                    }
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="invested"
+                    stroke="#8884d8"
+                    activeDot={{ r: 8 }}
+                  />
+                  <Line type="monotone" dataKey="total" stroke="#82ca9d" />
+                </LineChart>
+              </ResponsiveContainer>
             </Box>
           </>
         )}
