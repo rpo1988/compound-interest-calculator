@@ -413,50 +413,62 @@ function App() {
             </Box>
 
             {/* Graph */}
-            <Box width="100%" height="500px" mt={5}>
-              <ResponsiveContainer>
-                <LineChart
-                  data={graphData!}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="year"
-                    tickFormatter={(value) => `Year ${value}`}
-                  />
-                  <YAxis />
-                  <Tooltip
-                    labelFormatter={(label) => (
-                      <Typography variant="body1" component="div">
-                        Year {label}
-                      </Typography>
-                    )}
-                    formatter={(value, name) => [
-                      `$${parseNumber(value as number)}`,
-                      formatText(name as string, "capitalize"),
-                    ]}
-                    separator=": "
-                  />
-                  <Legend
-                    formatter={(value: string) =>
-                      formatText(value, "capitalize")
-                    }
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="invested"
-                    stroke="#8884d8"
-                    activeDot={{ r: 8 }}
-                  />
-                  <Line type="monotone" dataKey="total" stroke="#82ca9d" />
-                </LineChart>
-              </ResponsiveContainer>
-            </Box>
+            <Card
+              sx={{
+                mt: 5,
+              }}
+            >
+              <CardContent
+                sx={{
+                  paddingY: "24px !important",
+                  width: "100%",
+                  height: "500px",
+                }}
+              >
+                <ResponsiveContainer>
+                  <LineChart
+                    data={graphData!}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="year"
+                      tickFormatter={(value) => `Year ${value}`}
+                    />
+                    <YAxis />
+                    <Tooltip
+                      labelFormatter={(label) => (
+                        <Typography variant="body1" component="div">
+                          Year {label}
+                        </Typography>
+                      )}
+                      formatter={(value, name) => [
+                        `$${parseNumber(value as number)}`,
+                        formatText(name as string, "capitalize"),
+                      ]}
+                      separator=": "
+                    />
+                    <Legend
+                      formatter={(value: string) =>
+                        formatText(value, "capitalize")
+                      }
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="invested"
+                      stroke="#8884d8"
+                      activeDot={{ r: 8 }}
+                    />
+                    <Line type="monotone" dataKey="total" stroke="#82ca9d" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
           </>
         )}
       </Container>
